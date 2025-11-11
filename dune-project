@@ -7,18 +7,18 @@
 (source
  (github username/reponame))
 
-(authors "Author Name <author@example.com>")
+(authors "rhdCode0x7C3 <rhdCode0x7C3@icloud.com>")
 
-(maintainers "Maintainer Name <maintainer@example.com>")
+(maintainers "rhdCode0x7C3 <rhdCode0x7C3@icloud.com>")
 
-(license LICENSE)
+(license MIT)
 
 (documentation https://url/to/documentation)
 
 (package
  (name aoc)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "Advent of Code puzzle engine")
+ (description "Advent of Code puzzle engine")
  (depends ocaml)
  (tags
   ("add topics" "to describe" your project)))

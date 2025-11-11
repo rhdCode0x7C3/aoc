@@ -1,4 +1,5 @@
 (executable
  (public_name aoc)
  (name main)
- (libraries aoc))
+ (libraries aoc solutions core cmdliner)
+ (preprocess (pps ppx_let)))
