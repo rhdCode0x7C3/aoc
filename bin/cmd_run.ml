@@ -3,7 +3,10 @@ open Cmdliner
 open Cmdliner.Term
 open Aoc
 
-type error = Puzzle_err of Puzzle.error | Input_err of Input.error
+type error =
+  | Puzzle_err of Puzzle.error
+  | Input_err of Input.error
+  | Dispatcher_err of Solutions.Dispatcher.error
 
 let run ?(samp = false) year day () =
   let open Result in
@@ -15,7 +18,11 @@ let run ?(samp = false) year day () =
     Puzzle.get in_type year day |> map_error ~f:(fun e -> Puzzle_err e)
   in
   let%bind p_in = Input.load puzzle |> map_error ~f:(fun e -> Input_err e) in
-  print_endline p_in;
+  let%bind solution =
+    Solutions.Dispatcher.run puzzle p_in
+    |> map_error ~f:(fun e -> Dispatcher_err e)
+  in
+  Format.print_solution solution;
   Ok ()
 
 let handler res =
@@ -32,6 +39,9 @@ let handler res =
       Aoc_cli.exit_err
   | Error (Input_err Input.Path) ->
       print_endline "Invalid path.";
+      Aoc_cli.exit_err
+  | Error (Dispatcher_err Solutions.Dispatcher.Dispatcher) ->
+      print_endline "Solution not found.";
       Aoc_cli.exit_err
 
 let term =
