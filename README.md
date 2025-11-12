@@ -32,3 +32,6 @@ All commands should then be run from the project root directory.
 ## Usage
 aoc exposes the following commands:
 - `run` Run a puzzle solution
+
+## License
+MIT
