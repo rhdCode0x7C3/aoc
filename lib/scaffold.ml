@@ -1,7 +1,24 @@
 open Core
 open Core_unix
 
-type error = Environment | OC | File_exists
+type error = Environment | OC | File_exists | Dispatcher
+
+let make_dispatcher_line year day =
+  Printf.sprintf "| %4d, %02d -> Ok (Y%4dd%02d.solve input)" year day year day
+
+let dispatcher_path () =
+  match Sys.getenv "PROJECT_ROOT_DIR" with
+  | Some s -> Ok (s ^ "/solutions/dispatcher.ml")
+  | None -> Error Environment
+
+let check_dispatcher (s : string) =
+  let open Result in
+  let open Result.Let_syntax in
+  let%bind path = dispatcher_path () in
+  let lines = In_channel.read_lines path in
+  match List.find lines ~f:(fun line -> String.equal line s) with
+  | None -> Ok ()
+  | Some _ -> Error Dispatcher
 
 let template =
   {|
