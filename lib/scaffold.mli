@@ -1,5 +1,5 @@
-open Core
 
-type error = Environment | OC | File_exists
+type error =
+  | Generate_solution of Generate_solution.error
+  | Edit_dispatcher of Edit_dispatcher.error
 
-val init : Puzzle.t -> (unit, error) Result.t
