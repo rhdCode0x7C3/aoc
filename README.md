@@ -10,6 +10,7 @@ An Advent of Code puzzle engine for OCaml.
 - OPAM
 - Dune
 - Direnv (to automatically enable the `aoc` command)
+- libcurl-devel
 
 ## Installation
 From your command line:

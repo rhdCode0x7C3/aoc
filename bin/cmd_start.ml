@@ -4,38 +4,37 @@ open Cmdliner.Term
 open Aoc
 
 type error =
-  | Puzzle_err of Puzzle.error
+  | Scaffold_err of Scaffold.error
   | Input_err of Input.error
   | Dispatcher_err of Solutions.Dispatcher.error
+  | Puzzle_err of Puzzle.error
 
-let run ?(samp = false) year day () =
+let run year day () =
   let open Result in
   let open Result.Let_syntax in
-  let in_type =
-    match samp with false -> Puzzle.Input | true -> Puzzle.Sample
-  in
+  let in_type = Puzzle.Input in
   let%bind puzzle =
     Puzzle.get in_type year day |> map_error ~f:(fun e -> Puzzle_err e)
   in
-  let%bind p_in = Input.load puzzle |> map_error ~f:(fun e -> Input_err e) in
-  let%bind solution =
-    Solutions.Dispatcher.run puzzle p_in
-    |> map_error ~f:(fun e -> Dispatcher_err e)
+  let%bind () =
+    Scaffold.scaffold puzzle |> map_error ~f:(fun e -> Scaffold_err e)
   in
-  Format.print_solution solution;
   Ok ()
 
 let handler res =
   match res () with
   | Ok () -> Aoc_cli.exit_ok
-  | Error (Puzzle_err e) ->
-      print_endline (Puzzle.error_to_string e);
+  | Error (Scaffold_err e) ->
+      print_endline (Scaffold.error_to_string e);
       Aoc_cli.exit_err
   | Error (Input_err e) ->
       print_endline (Input.error_to_string e);
       Aoc_cli.exit_err
   | Error (Dispatcher_err e) ->
       print_endline (Solutions.Dispatcher.error_to_string e);
+      Aoc_cli.exit_err
+  | Error (Puzzle_err e) ->
+      print_endline (Puzzle.error_to_string e);
       Aoc_cli.exit_err
 
 let term =
@@ -47,13 +46,8 @@ let term =
     Arg.(
       required & pos 1 (some string) None & info [] ~doc:"The day" ~docv:"DAY")
   in
-  let samp_term =
-    Arg.(
-      value & flag
-      & info [ "s"; "sample" ] ~doc:"Use the sample input" ~docv:"SAMPLE")
-  in
-  const (fun samp year day -> handler (fun () -> run ~samp year day ()))
-  $ samp_term $ year_term $ day_term
+  const (fun year day -> handler (fun () -> run year day ()))
+  $ year_term $ day_term
 
-let info = Cmd.info ~doc:"Run a puzzle solution." "run"
+let info = Cmd.info ~doc:"Start working on a new puzzle solution" "start"
 let cmd = Cmd.v info term

@@ -2,6 +2,12 @@ open Core
 
 type error = Environment | Dispatcher | IC | OC
 
+let error_to_string = function
+  | Environment -> "Environment variable PROJECT_ROOT_DIR is not set."
+  | Dispatcher -> "This solution is already implemented."
+  | IC -> "Failed to open an input channel."
+  | OC -> "Failed to open an output channel."
+
 let make_line year day =
   Printf.sprintf "| %4d, %02d -> Ok (Y%4dd%02d.solve input)" year day year day
 
@@ -48,6 +54,8 @@ let edit (p : Puzzle.t) =
     let c =
      fun s -> String.is_substring ~substring:"(* ADD SOLUTIONS HERE *)" s
     in
-    Ok (insert l e c)
+    match check_dispatcher l e with
+    | Ok () -> Ok (insert l e c)
+    | Error e -> Error e
   in
   match dispatcher with Ok d -> write d | Error e -> Error e

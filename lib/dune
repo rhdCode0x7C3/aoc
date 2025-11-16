@@ -1,4 +1,4 @@
 (library
  (name aoc)
- (libraries core core_unix cmdliner)
+ (libraries core core_unix cmdliner ezcurl)
  (preprocess (pps ppx_let)))

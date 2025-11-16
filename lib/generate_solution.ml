@@ -2,6 +2,11 @@ open Core
 
 type error = Environment | OC | File_exists
 
+let error_to_string = function
+  | Environment -> "Environment variable PROJECT_ROOT_DIR is not set."
+  | OC -> "Failed to open an output channel."
+  | File_exists -> "This solution already exists."
+
 let template =
   {|
 module Solution : Aoc.Run.RUN = struct
